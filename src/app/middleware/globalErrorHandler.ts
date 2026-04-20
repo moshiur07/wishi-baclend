@@ -7,6 +7,8 @@ import status from "http-status";
 import AppError from "../../helper/AppError";
 import { IErrorSource } from "../../interface/errorInterfaces";
 import { handleZodError } from "../../helper/handleZodError";
+import { handlePrismaError } from "../../helper/handlePrismaError";
+import { Prisma } from "../../generated/prisma/client";
 import z from "zod";
 
 export const globalErrorHandler = (
@@ -30,6 +32,19 @@ export const globalErrorHandler = (
         statusCode = simplifiedError.statusCode as number;
         message = simplifiedError.message;
         errorSources = [...simplifiedError.errorSources];
+    } else if (
+        err instanceof Prisma.PrismaClientValidationError ||
+        err instanceof Prisma.PrismaClientKnownRequestError ||
+        err instanceof Prisma.PrismaClientUnknownRequestError ||
+        err instanceof Prisma.PrismaClientInitializationError ||
+        err instanceof Prisma.PrismaClientRustPanicError
+    ) {
+        const simplifiedError = handlePrismaError(err);
+        if (simplifiedError) {
+            statusCode = simplifiedError.statusCode as number;
+            message = simplifiedError.message;
+            errorSources = [...simplifiedError.errorSources];
+        }
     } else if (err instanceof AppError) {
         statusCode = status.INTERNAL_SERVER_ERROR;
         message = err.message;

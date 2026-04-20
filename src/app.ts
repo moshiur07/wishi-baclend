@@ -14,13 +14,12 @@ app.all('/api/auth/{*any}', toNodeHandler(auth));
 app.use(express.json());
 app.use(cookieParser())
 
+app.use("/api", routes)
+
 // Basic route
 app.get("/", (req: Request, res: Response) => {
     res.send("Hello, TypeScript + Express!");
 });
-
-app.use("/api", routes)
-
 // Global error handler
 app.use(globalErrorHandler);
 // Not found

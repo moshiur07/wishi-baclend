@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
 import { Role } from "../../generated/prisma/enums";
+import { envVars } from "../../config/env";
 // import { envVars } from "../../config/env";
 
 export const auth = betterAuth({
@@ -53,4 +54,11 @@ export const auth = betterAuth({
         enabled: true,
         requireEmailVerification: false
     },
+    socialProviders: {
+        google: {
+            clientId: envVars.GOOGLE_CLIENT_ID,
+            clientSecret: envVars.GOOGLE_CLIENT_SECRET,
+            enabled: true
+        }
+    }
 });
